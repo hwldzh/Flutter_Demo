@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <Button
+        android:id="@+id/first"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="23dp"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="80dp"
+        android:textColor="@android:color/holo_red_dark"
+        android:text="点击跳转到模块1的Flutter页面\n使用原生导航栏" />
+
+    <Button
+        android:id="@+id/second"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="23dp"
+        android:gravity="center"
+        android:textColor="@android:color/holo_red_dark"
+        android:layout_marginTop="30dp"
+        android:text="点击跳转到模块1的Flutter页面\n使用Flutter导航栏"
+        app:layout_constraintLeft_toLeftOf="@+id/first"
+        app:layout_constraintTop_toBottomOf="@id/first" />
+
+    <Button
+        android:id="@+id/third"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="23dp"
+        android:gravity="center"
+        android:textColor="@android:color/holo_red_dark"
+        android:layout_marginTop="30dp"
+        android:text="点击跳转到模块2的Flutter页面\n使用Flutter导航栏"
+        app:layout_constraintLeft_toLeftOf="@+id/second"
+        app:layout_constraintTop_toBottomOf="@id/second" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

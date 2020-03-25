@@ -1,0 +1,55 @@
+// 将第三方库除armeabi和x86包以外的SO库删除
+def filterCpuArch(Task task) {
+    println "filterCpuArch"
+    Iterator<File> iterator = task.getOutputs().getFiles().getFiles().iterator()
+    while (iterator.hasNext()) {
+        String myFile = iterator.next().getAbsolutePath()
+        println "output files"
+        println myFile
+        File outFile = new File(myFile)
+        deleteNoUsedSoFile(outFile)
+    }
+}
+
+
+def deleteNoUsedSoFile(File dir) {
+    File[] files = dir.listFiles()
+    if (files == null) {
+        return
+    }
+    for (File file : files) {
+        if (file.isDirectory()) {
+            deleteNoUsedSoFile(file)
+            continue
+        }
+        println "file : "  + file.absolutePath
+        if (file.getParentFile().name.equals("armeabi-v7a")) {
+            File targetFile = new File(file.getParentFile().getParentFile(), "armeabi/" + file.name)
+            if (!targetFile.exists()) {
+                file.renameTo(targetFile)
+                println "rename: "  + file.absolutePath + "; to :" + targetFile.absolutePath
+            } else {
+                file.delete()
+                println "delete: "  + file.absolutePath
+            }
+        } else if (!file.getParentFile().name.equals("armeabi")) {
+            file.delete()
+            println "delete: "  + file.absolutePath
+        }
+    }
+}
+
+project.afterEvaluate {
+    // debug模式下删除SO库 packageDebug
+    tasks.getByName('transformNativeLibsWithMergeJniLibsForDebug') { // Hook prepareDebugDependencies任务
+        it.doLast {
+            filterCpuArch(it)
+        }
+    }
+    // 打包的时候删除SO库
+    tasks.getByName('transformNativeLibsWithMergeJniLibsForRelease') {
+        it.doLast {
+            filterCpuArch(it)
+        }
+    }
+}
