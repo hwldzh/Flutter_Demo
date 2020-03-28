@@ -1,5 +1,6 @@
 package com.vch.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -19,8 +20,20 @@ public class SecondActivity extends AppCompatActivity {
         findViewById(R.id.title_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendDataBack();
                 finish();
             }
         });
+    }
+
+    private void sendDataBack() {
+        setResult(2, new Intent().putExtra("nativeData"
+                , "原生主动发消息给Flutter" + hashCode())); //加上hashCode为了测试，Flutter端是否能接收到数据的变化
+    }
+
+    @Override
+    public void onBackPressed() {
+        sendDataBack();
+        super.onBackPressed();
     }
 }

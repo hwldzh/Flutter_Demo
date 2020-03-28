@@ -6,15 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:padding="10dp"
-        android:gravity="center"
-        android:textColor="@android:color/black"
-        android:background="@android:color/holo_blue_dark"
-        android:text="第一个原生页面"/>
+        android:layout_height="48dp"
+        android:background="@color/colorPrimaryDark">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/title_back"
+            android:layout_centerVertical="true"
+            android:textSize="20dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@android:color/white"
+            android:text="第一个原生页面"/>
+    </RelativeLayout>
 
     <include layout="@layout/content_main" />
 
