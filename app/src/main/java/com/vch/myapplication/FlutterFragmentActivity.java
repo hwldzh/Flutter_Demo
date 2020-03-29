@@ -32,6 +32,7 @@ public class FlutterFragmentActivity extends FragmentActivity implements Flutter
 
     private FlutterFragment flutterFragment;
     private EventChannel.EventSink eventSink;
+    private MethodChannel methodChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class FlutterFragmentActivity extends FragmentActivity implements Flutter
             route = route.substring(0, index);
             route+="?haveNav=1"; //自己实现导航栏，将该参数传递给Flutter
             if (flutterFragment == null) {
-                flutterFragment = FlutterFragment.withNewEngine().initialRoute(route).build();
+                FlutterFragment flutterFragment = FlutterFragment.withNewEngine().initialRoute(route).build();
                 fragmentManager.beginTransaction().add(R.id.fragment_container
                         , flutterFragment, TAG_FLUTTER_FRAGMENT).commit();
             }
@@ -82,7 +83,9 @@ public class FlutterFragmentActivity extends FragmentActivity implements Flutter
 
     @Override
     protected void onNewIntent(@NonNull Intent intent) {
-        flutterFragment.onNewIntent(intent);
+        if (flutterFragment != null) {
+            flutterFragment.onNewIntent(intent);
+        }
     }
 
     /**
@@ -90,31 +93,41 @@ public class FlutterFragmentActivity extends FragmentActivity implements Flutter
      */
     @Override
     public void onBackPressed() {
-        flutterFragment.onBackPressed();
+        if (flutterFragment != null) {
+            flutterFragment.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions
             , @NonNull int[] grantResults) {
-        flutterFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (flutterFragment != null) {
+            flutterFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
     public void onUserLeaveHint() {
-        flutterFragment.onUserLeaveHint();
+        if (flutterFragment != null) {
+            flutterFragment.onUserLeaveHint();
+        }
     }
 
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-        flutterFragment.onTrimMemory(level);
+        if (flutterFragment != null) {
+            flutterFragment.onTrimMemory(level);
+        }
     }
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL_NATIVE)
-                .setMethodCallHandler(
+        methodChannel = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL_NATIVE);
+        methodChannel.setMethodCallHandler(
                         (call, result) -> {
                             methodCall(call, result);
                         });
@@ -158,7 +171,10 @@ public class FlutterFragmentActivity extends FragmentActivity implements Flutter
             //原生主动发消息给Flutter
             if (data != null) {
                 String nativeData = data.getStringExtra("nativeData");
-                eventSink.success(nativeData);
+                if(eventSink != null) {
+                    eventSink.success(nativeData); //通过EventChannel发送消息给Flutter
+                }
+                methodChannel.invokeMethod("gotoFlutterPage", nativeData); //通过MethodChannel发送消息给Flutter
             }
         }
     }
